@@ -8,7 +8,7 @@ router.get('/', async (req, res) => {
   // find all products
   try {
     const allProducts = await Product.findAll({
-      // be sure to include its associated Category and Tag data
+      //include its associated Category and Tag data
       include: [{ model: Category }, { model: Tag }]
     });
     res.status(200).json(allProducts);
@@ -23,10 +23,11 @@ router.get('/:id', async (req, res) => {
   // find a single product by its `id`
   try {
     const oneProduct = await Product.findByPk(req.params.id, {
+      //include its associated Category and Tag data
       include: [{ model: Category }, { model: Tag }]
     });
     if (!oneProduct) {
-      res.status(404).json({ message: 'No reader found with that id!' });
+      res.status(404).json({ message: "No product found with that id!" });
       return;
     }
     res.status(200).json(oneProduct);
@@ -34,18 +35,20 @@ router.get('/:id', async (req, res) => {
     res.status(500).json(err);
   }
 
-  // be sure to include its associated Category and Tag data
+
 });
 
 // create new product
-router.post('/', (req, res) => {
+router.post('/', async (req, res) => {
+
+
   /* req.body should look like this...
-    {
-      product_name: "Basketball",
-      price: 200.00,
-      stock: 3,
-      tagIds: [1, 2, 3, 4]
-    }
+{
+  product_name: "Basketball",
+  price: 200.00,
+  stock: 3,
+  tagIds: [1, 2, 3, 4]
+}
   */
   Product.create(req.body)
     .then((product) => {
