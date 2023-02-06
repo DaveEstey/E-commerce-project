@@ -4,14 +4,36 @@ const { Product, Category, Tag, ProductTag } = require('../../models');
 // The `/api/products` endpoint
 
 // get all products
-router.get('/', (req, res) => {
+router.get('/', async (req, res) => {
   // find all products
-  // be sure to include its associated Category and Tag data
+  try {
+    const allProducts = await Product.findAll({
+      // be sure to include its associated Category and Tag data
+      include: [{ model: Category }, { model: Tag }]
+    });
+    res.status(200).json(allProducts);
+  } catch (err) {
+    res.status(500).json(err);
+  }
+
 });
 
 // get one product
-router.get('/:id', (req, res) => {
+router.get('/:id', async (req, res) => {
   // find a single product by its `id`
+  try {
+    const oneProduct = await Product.findByPk(req.params.id, {
+      include: [{ model: Category }, { model: Tag }]
+    });
+    if (!oneProduct) {
+      res.status(404).json({ message: 'No reader found with that id!' });
+      return;
+    }
+    res.status(200).json(oneProduct);
+  } catch (err) {
+    res.status(500).json(err);
+  }
+
   // be sure to include its associated Category and Tag data
 });
 
